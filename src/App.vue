@@ -1,17 +1,16 @@
 <template>
   <div id="app">
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <h2 style="text-align: center">
+      I-+-+-+-+-+-+-+- Batalha bem louca -+-+-+-+-+-+-+-I
+    </h2>
+    <a href="">Voltar ao menu principal</a>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
-
 export default {
   name: "App",
-  components: {
-    HelloWorld,
-  },
 };
 </script>
 
