@@ -7,7 +7,7 @@
     <br />
     <h3>Equipamentos não equipados</h3>
     <p
-      v-for="(equipament, index) in this.inventory.unequipedEquipaments"
+      v-for="(equipament, index) in this.inventory.unequipedItems"
       :key="`unequiped-${index}`"
     >
       • {{ equipament }}
@@ -15,7 +15,7 @@
     </p>
     <h3>Equipamentos equipados</h3>
     <p
-      v-for="(equipament, index) in this.inventory.equipedEquipaments"
+      v-for="(equipament, index) in this.inventory.equipedItems"
       :key="`equiped-${index}`"
     >
       • {{ equipament }}
@@ -25,33 +25,46 @@
 </template>
 
 <script>
-// Lição
-// 1 - Adicionar uma rota pra o inventory - Feito
-// 2 - Criar objeto para o inventário - Feito
-// 3 - Mostrar uma lista de equipamentos nesta página - Feito
-// 4 - Fazer um botão de equipar/desequipar item para cada item do inventário - Feito
-// 5 - Mostrar uma sessão com os itens equipados - Feito
+// Criar um formato para um objeto de item:
+// {nome: "Trevo", defesa: 1, ataque: 2, vida: 3, chanceDeCritico: 0.2}
+const DEFAULT_INVENTORY = {
+  equipedItems: [],
+  unequipedItems: ["Trevo", "Cartola", "Casaco"], // tornar cada item em um item de verdade, não só nome de item
+};
 
 export default {
   data: () => ({
-    inventory: {
-      equipedEquipaments: [],
-      unequipedEquipaments: ["Trevo", "Cartola", "Casaco"], // tornar cada item em um item de verdade, não só nome de item
-    },
+    inventory: {},
   }),
   methods: {
     equipItem(index) {
       let item;
-      item = this.inventory.unequipedEquipaments[index];
-      this.inventory.unequipedEquipaments.splice(index, 1);
-      this.inventory.equipedEquipaments.push(item);
+      item = this.inventory.unequipedItems[index];
+      this.inventory.unequipedItems.splice(index, 1);
+      this.inventory.equipedItems.push(item);
+      this.storeInventory(this.inventory);
     },
     unequipItem(index) {
       let item;
-      item = this.inventory.equipedEquipaments[index];
-      this.inventory.equipedEquipaments.splice(index, 1);
-      this.inventory.unequipedEquipaments.push(item);
+      item = this.inventory.equipedItems[index];
+      this.inventory.equipedItems.splice(index, 1);
+      this.inventory.unequipedItems.push(item);
+      this.storeInventory(this.inventory);
     },
+    storeInventory(inventory) {
+      localStorage.setItem("game-inventory", JSON.stringify(inventory));
+    },
+  },
+  mounted() {
+    const rawInventory = localStorage.getItem("game-inventory");
+    if (rawInventory === null) {
+      console.log("First time on inventory, populating default inventory");
+      this.storeInventory(DEFAULT_INVENTORY);
+      this.inventory = DEFAULT_INVENTORY;
+    } else {
+      console.log("Pre-existing inventory found, using that.");
+      this.inventory = JSON.parse(rawInventory);
+    }
   },
 };
 </script>

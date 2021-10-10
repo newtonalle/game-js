@@ -16,6 +16,12 @@
     <br />
     <button @click="advancedObjects">Objetos - Avançado</button> <br />
     <button @click="classes">Classes</button>
+
+    <br /><br />
+    <button @click="incrementLocalStorage">Incrementar local storage</button>
+
+    <br /><br />
+    <button @click="json">JSON tutorial</button>
   </div>
 </template>
 
@@ -202,6 +208,50 @@ export default {
       console.log(pessoa);
       pessoa.peidar(123);
     },
+    incrementLocalStorage() {
+      // Para interagir com o armazenamento local do browser, usamos 2 funções
+      // localStorage.getItem e localStorage.setItem
+      let value = localStorage.getItem("tutorial_value"); // Sempre que pega do localstorage, objeto vem como string
+      console.log("Value was", value);
+      if (!value) {
+        value = 0;
+      }
+      value = parseInt(value) + 1;
+      console.log("Value is", value);
+      localStorage.setItem("tutorial_value", value);
+    },
+    json() {
+      // JSON é um formato de arquivo utilizado para representar objetos.
+      // Ele é muito semelhante a um objeto do node {chave: "valor"}.
+      // Existem funções do javascript na biblioteca JSON que transformam um objeto em JSON e vice versa.
+      const obj = {
+        name: "Claudio",
+        surname: "Bochecha",
+      };
+      console.log("Obj", obj);
+
+      // A versão "JSON" é uma string do objeto é obtida usando JSON.stringify
+      const jsonObj = JSON.stringify(obj);
+      console.log("Obj on JSON", jsonObj);
+
+      // É possível converter uma string no formato 'JSON' para um objeto do node usando JSON.parse
+      const objFromJson = JSON.parse(jsonObj);
+      console.log("Obj parsed from JSON", objFromJson);
+    },
+  },
+  // Ciclo de vida dos componentes
+  // https://br.vuejs.org/v2/guide/instance.html
+  created() {
+    // Quando um componente é criado em memória, ele passa pela função created
+    console.log("Im being created!");
+  },
+  mounted() {
+    // Quando um componente que está em memória é renderizado na tela, ele passa pela função mounted
+    console.log("Im being mounted!");
+  },
+  destroyed() {
+    // Quando um componente é deletado
+    console.log("Im being destroyed!");
   },
 };
 </script>
