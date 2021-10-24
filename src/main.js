@@ -19,12 +19,20 @@ router.beforeEach((to, from, next) => {
   // Next: é a função que é executada quando entra na roda de destino
   console.log('Before each on route', to, from, next)
   console.log('Is new player', isNewPlayer())
-  if (to.meta?.requiresExistingPlayer && isNewPlayer()) {
+
+  const computedIsNewPlayer = isNewPlayer()
+
+  if (to.meta.requiresNewPlayer && !computedIsNewPlayer) {
+    next({ name: 'home' })
+  } else if (to.meta.requiresExistingPlayer && computedIsNewPlayer) {
     next({ name: 'new-player' })
   } else {
     // Precisamos chamar a função next para que a rota "To" seja de fato 'executada'
     next()
   }
+
+
+
 
 })
 

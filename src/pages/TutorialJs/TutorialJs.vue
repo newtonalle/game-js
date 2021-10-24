@@ -15,6 +15,7 @@
     <button @click="variableTypes">Tipos de variáveis (combinando tudo)</button>
     <br />
     <button @click="advancedObjects">Objetos - Avançado</button> <br />
+    <button @click="advancedArrays">Arrays - Avançado</button> <br />
     <button @click="classes">Classes</button>
 
     <br /><br />
@@ -191,6 +192,61 @@ export default {
       const [num1, num2, ...restoArray] = array;
       console.log(num1, num2);
       console.log("Resto", restoArray);
+    },
+    advancedArrays() {
+      // Existem 3 principais métodos para usar com arrays, o foreach, o map e o reduce
+      const array = [10, 20, 30, 40];
+      let returnValue;
+      // forEach é uma abreviação de um loop nos elementos do array.
+      // Ele recebe como parâmetro uma função que recebe como parâmetro o elemento e o índice de cada interação
+      // no array
+      // forEach não retorna nada
+      returnValue = array.forEach((el, index) => {
+        console.log(`forEach - El=${el} index=${index}`);
+      });
+      console.log(`forEach - Returned value is ${returnValue}`);
+      // É equivalente a
+      for (const el of array) {
+        console.log(`for of - El=${el}`);
+      }
+
+      // Map funciona quase igual ao forEach, porém ele retorna um array com o mesmo tamanho do array original,
+      // porém com os elementos retornados pela função que é passada como parametro
+      returnValue = array.map((el, index) => {
+        console.log(`map - El=${el} index=${index}`);
+        return el + index;
+      });
+      console.log(`map - Returned value is`, returnValue);
+
+      // Reduce funciona quase igual ao forEach também, porém ele retorna um objeto acumulado entre as iterações
+      // no array, de acordo com o retorno da função que é passada como parâmetro
+      // Ele também tem um parâmetro a mais (além da função que passamos nos outros) com o valor inicial do reduce.
+      // A função que é passada como parametro (callback) recebe como primeiro parametro o valor retornado
+      // da iteração anterior.
+
+      // Por exemplo, a soma
+      returnValue = array.reduce((acc, el, index) => {
+        console.log(`reduce - Acc=${acc} El=${el} index=${index}`);
+        return acc + el;
+      }, 0);
+      console.log(`reduce - Returned value is`, returnValue);
+
+      // Por exemplo, a multiplicacao
+      returnValue = array.reduce((acc, el, index) => {
+        console.log(`reduce - Acc=${acc} El=${el} index=${index}`);
+        return acc * el;
+      }, 1);
+      console.log(`reduce - Returned value is`, returnValue);
+
+      // Posso retornar um objeto, não precisa ser um numero
+      // {10: 0, 20: 1, 30: 2, 40: 3}
+      returnValue = array.reduce((acc, el, index) => {
+        console.log(`reduce - Acc=${acc} El=${el} index=${index}`);
+        // acc[el] = index;
+        // return acc;
+        return { ...acc, [el]: index };
+      }, {});
+      console.log(`reduce - Returned value is`, returnValue);
     },
     classes() {
       class Pessoa {
