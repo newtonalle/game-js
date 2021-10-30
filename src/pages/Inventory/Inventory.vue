@@ -22,17 +22,15 @@
       <span class="clickable" @click="unequipItem(index)">U</span>
     </p>
     <h3>Status</h3>
-    <h3 v-text="gearedPlayer.name"></h3>
-    <h4>Vida:</h4>
-    <p v-text="playerStats.life"></p>
-    <h4>Defesa:</h4>
-    <p v-text="playerStats.defense"></p>
-    <h4>Ataque:</h4>
-    <p v-text="playerStats.attack"></p>
-    <h4>Chance de Crítico:</h4>
-    <p v-text="playerStats.critChance"></p>
+    <h3 v-text="player.name"></h3>
+    <h4>Força:</h4>
+    <p v-text="playerStats.strength"></p>
+    <h4>Destreza:</h4>
+    <p v-text="playerStats.dexterity"></p>
+    <h4>Inteligência:</h4>
+    <p v-text="playerStats.intelligence"></p>
     <h4>Classe:</h4>
-    <p v-text="gearedPlayer.class"></p>
+    <p v-text="player.class.name"></p>
   </div>
 </template>
 
@@ -49,28 +47,22 @@ export default {
   computed: {
     playerStats() {
       return {
-        life:
-          this.player.life +
+        strength:
+          this.player.strength +
           this.inventory.equipedItems.reduce(
-            (life, item) => life + item.life,
+            (strength, item) => strength + item.strength,
             0
           ),
-        defense:
-          this.player.defense +
+        dexterity:
+          this.player.dexterity +
           this.inventory.equipedItems.reduce(
-            (defense, item) => defense + item.defense,
+            (dexterity, item) => dexterity + item.dexterity,
             0
           ),
-        attack:
-          this.player.attack +
+        intelligence:
+          this.player.intelligence +
           this.inventory.equipedItems.reduce(
-            (attack, item) => attack + item.attack,
-            0
-          ),
-        critChance:
-          this.player.critChance +
-          this.inventory.equipedItems.reduce(
-            (critChance, item) => critChance + item.critChance,
+            (intelligence, item) => intelligence + item.intelligence,
             0
           ),
       };
@@ -84,7 +76,6 @@ export default {
       this.inventory.equipedItems.push(item);
       this.storeInventory(this.inventory);
       console.log(this.inventory);
-      this.calculateGearedPlayer();
     },
     unequipItem(index) {
       let item;
@@ -92,17 +83,9 @@ export default {
       this.inventory.equipedItems.splice(index, 1);
       this.inventory.unequipedItems.push(item);
       this.storeInventory(this.inventory);
-      this.calculateGearedPlayer();
     },
     storeInventory(inventory) {
       localStorage.setItem("game-inventory", JSON.stringify(inventory));
-    },
-    storeGearedPlayer(gearedPlayer) {
-      localStorage.setItem("game-geared-player", JSON.stringify(gearedPlayer));
-    },
-    calculateGearedPlayer() {
-      this.gearedPlayer = this.player;
-      this.storeGearedPlayer(this.gearedPlayer);
     },
   },
   created() {
@@ -113,7 +96,6 @@ export default {
     console.log(this.player);
     console.log("Pre-existing inventory found, using that.");
     this.inventory = JSON.parse(rawInventory);
-    this.calculateGearedPlayer();
   },
 };
 </script>
