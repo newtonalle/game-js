@@ -10,7 +10,20 @@
       v-for="(equipament, index) in this.inventory.unequipedItems"
       :key="`unequiped-${index}`"
     >
-      • {{ equipament.name }}
+      <items
+        :equipamentName="equipament.name"
+        :equipamentType="equipament.type"
+        :equipamentDexterity="equipament.dexterity"
+        :equipamentIntelligence="equipament.intelligence"
+        :equipamentStrength="equipament.strength"
+        :equipamentMinRequirementsDexterity="
+          equipament.minRequirements.dexterity
+        "
+        :equipamentMinRequirementsIntelligence="
+          equipament.minRequirements.intelligence
+        "
+        :equipamentMinRequirementsStrength="equipament.minRequirements.strength"
+      />
       <span class="clickable" @click="equipItem(index)">E</span>
     </p>
     <h3>Equipamentos equipados</h3>
@@ -18,9 +31,23 @@
       v-for="(equipament, index) in this.inventory.equipedItems"
       :key="`equiped-${index}`"
     >
-      • {{ equipament.name }}
+      <items
+        :equipamentName="equipament.name"
+        :equipamentType="equipament.type"
+        :equipamentDexterity="equipament.dexterity"
+        :equipamentIntelligence="equipament.intelligence"
+        :equipamentStrength="equipament.strength"
+        :equipamentMinRequirementsDexterity="
+          equipament.minRequirements.dexterity
+        "
+        :equipamentMinRequirementsIntelligence="
+          equipament.minRequirements.intelligence
+        "
+        :equipamentMinRequirementsStrength="equipament.minRequirements.strength"
+      />
       <span class="clickable" @click="unequipItem(index)">U</span>
     </p>
+    <p>------------------</p>
     <h3>Status</h3>
     <h3 v-text="player.name"></h3>
     <h4>Força:</h4>
@@ -31,6 +58,17 @@
     <p v-text="playerStats.intelligence"></p>
     <h4>Classe:</h4>
     <p v-text="player.class.name"></p>
+    <h4>Vida:</h4>
+    <p v-text="player.basicStats.maxHealth + playerStats.strength * 20"></p>
+    <h4>Defesa:</h4>
+    <p v-text="player.basicStats.defense + playerStats.dexterity * 1"></p>
+    <h4>Mana:</h4>
+    <p v-text="player.basicStats.maxMana + playerStats.intelligence * 5"></p>
+    <h4>Dano:</h4>
+    <p
+      v-text="player.basicStats.damage + playerStats[player.class.mainStat] * 1"
+    ></p>
+    <p>------------------</p>
   </div>
 </template>
 
@@ -38,7 +76,10 @@
 // Criar um formato para um objeto de item:
 // {nome: "Trevo", defesa: 1, ataque: 2, vida: 3, chanceDeCritico: 0.2}
 
+import Items from "./components/Items.vue";
+
 export default {
+  components: { Items },
   data: () => ({
     inventory: {},
     player: {},
@@ -89,6 +130,7 @@ export default {
     },
   },
   created() {
+    //this.playerBasicStats();
     const rawInventory = localStorage.getItem("game-inventory");
     const rawPlayer = localStorage.getItem("game-player");
     console.log("Pre-existing player found, using that.");

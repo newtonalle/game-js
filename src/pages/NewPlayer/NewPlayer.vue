@@ -73,6 +73,7 @@ const PLAYER_CLASSES = [
   {
     id: "mage",
     name: "Mago",
+    mainStat: "intelligence",
     baseStats: {
       strength: 5,
       dexterity: 0,
@@ -82,6 +83,7 @@ const PLAYER_CLASSES = [
   {
     id: "warrior",
     name: "Guerreiro",
+    mainStat: "strength",
     baseStats: {
       strength: 15,
       dexterity: 5,
@@ -91,6 +93,7 @@ const PLAYER_CLASSES = [
   {
     id: "archer",
     name: "Arqueiro",
+    mainStat: "dexterity",
     baseStats: {
       strength: 5,
       dexterity: 10,
@@ -103,24 +106,42 @@ const DEFAULT_INVENTORY = {
   equipedItems: [],
   unequipedItems: [
     {
-      name: "Chapél",
+      name: "Capacete Viking",
       strength: 10,
       dexterity: 3,
       intelligence: 1,
+      type: "Capacete",
+      minRequirements: {
+        strength: 35,
+        dexterity: 5,
+        intelligence: 0,
+      },
     },
 
     {
-      name: "Cartola",
-      strength: 20,
-      dexterity: 6,
+      name: "Colete",
+      strength: 5,
+      dexterity: 10,
       intelligence: 2,
+      type: "Armadura",
+      minRequirements: {
+        strength: 0,
+        dexterity: 0,
+        intelligence: 0,
+      },
     },
 
     {
-      name: "Cone",
-      strength: 30,
-      dexterity: 9,
-      intelligence: 3,
+      name: "Adaga",
+      strength: 0,
+      dexterity: 15,
+      intelligence: 5,
+      type: "Mão principal",
+      minRequirements: {
+        strength: 0,
+        dexterity: 0,
+        intelligence: 0,
+      },
     },
   ], // tornar cada item em um item de verdade, não só nome de item
 };
@@ -137,6 +158,7 @@ export default {
       strength: 0,
       dexterity: 0,
       intelligence: 0,
+      basicStats: { maxHealth: 200, defense: 10, maxMana: 100, damage: 30 },
       class: null,
       skillPoints: 5,
     },
@@ -177,6 +199,7 @@ export default {
           strength: this.player.strength,
           dexterity: this.player.dexterity,
           intelligence: this.player.intelligence,
+          basicStats: this.player.basicStats,
           class: this.player.class,
         })
       );
