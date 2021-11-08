@@ -103,6 +103,11 @@ const PLAYER_CLASSES = [
 ];
 
 const DEFAULT_INVENTORY = {
+  equipmentSlots: {
+    helmet: false,
+    armor: false,
+    mainHand: false,
+  },
   equipedItems: [],
   unequipedItems: [
     {
@@ -110,7 +115,7 @@ const DEFAULT_INVENTORY = {
       strength: 10,
       dexterity: 3,
       intelligence: 1,
-      type: "Capacete",
+      type: "helmet",
       minRequirements: {
         strength: 35,
         dexterity: 5,
@@ -123,7 +128,7 @@ const DEFAULT_INVENTORY = {
       strength: 5,
       dexterity: 10,
       intelligence: 2,
-      type: "Armadura",
+      type: "armor",
       minRequirements: {
         strength: 0,
         dexterity: 0,
@@ -136,7 +141,19 @@ const DEFAULT_INVENTORY = {
       strength: 0,
       dexterity: 15,
       intelligence: 5,
-      type: "Mão principal",
+      type: "mainHand",
+      minRequirements: {
+        strength: 0,
+        dexterity: 0,
+        intelligence: 0,
+      },
+    },
+    {
+      name: "Adaga II",
+      strength: 0,
+      dexterity: 15,
+      intelligence: 5,
+      type: "mainHand",
       minRequirements: {
         strength: 0,
         dexterity: 0,

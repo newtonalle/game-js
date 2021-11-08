@@ -82,12 +82,20 @@ export default {
   components: { Items },
   data: () => ({
     inventory: {},
+    playerStats: {
+      strength: 0,
+      intelligence: 0,
+      dexterity: 0,
+    },
     player: {},
-    gearedPlayer: {},
   }),
-  computed: {
-    playerStats() {
-      return {
+  watch: {
+    // Esse watch também é executado quando o site é created, porque o inventário atualiza
+    // e o watch pega logo de cara, atualizando o valor de PlayerStats para o valor do player + items
+    // Apesar de isso resolver o problema que tinha, irei criar uma função que é executada quando o site é criado
+    // e quando algum valor em inventory.UnequipedItems atualiza, se eu conseguir usar funções em Watch
+    "inventory.unequipedItems"() {
+      this.playerStats = {
         strength:
           this.player.strength +
           this.inventory.equipedItems.reduce(
@@ -109,20 +117,59 @@ export default {
       };
     },
   },
+  computed: {
+    // Transforma o valor do objeto toda vez que qualquer variável muda, como um watch geral
+    // Problema aqui, pois não consigo utilizar um objeto computed em Javascript, somente no HTML, o
+    // que é um problema, portanto estou movendo o sistema para uma Watch
+    //playerStats() {
+    //return {
+    //strength:
+    //this.player.strength +
+    //this.inventory.equipedItems.reduce(
+    //(strength, item) => strength + item.strength,
+    //0
+    //),
+    //dexterity:
+    //this.player.dexterity +
+    //this.inventory.equipedItems.reduce(
+    // (dexterity, item) => dexterity + item.dexterity,
+    // 0
+    //),
+    //intelligence:
+    //this.player.intelligence +
+    //this.inventory.equipedItems.reduce(
+    //(intelligence, item) => intelligence + item.intelligence,
+    //0
+    //),
+    //};
+    //},
+  },
   methods: {
     equipItem(index) {
       let item;
       item = this.inventory.unequipedItems[index];
-      this.inventory.unequipedItems.splice(index, 1);
-      this.inventory.equipedItems.push(item);
-      this.storeInventory(this.inventory);
-      console.log(this.inventory);
+      if (item.minRequirements.strength <= this.playerStats.strength) {
+        if (item.minRequirements.dexterity <= this.playerStats.dexterity) {
+          if (
+            item.minRequirements.intelligence <= this.playerStats.intelligence
+          ) {
+            if (!this.inventory.equipmentSlots[item.type]) {
+              this.inventory.unequipedItems.splice(index, 1);
+              this.inventory.equipedItems.push(item);
+              this.inventory.equipmentSlots[item.type] = true;
+              this.storeInventory(this.inventory);
+              console.log(this.inventory);
+            }
+          }
+        }
+      }
     },
     unequipItem(index) {
       let item;
       item = this.inventory.equipedItems[index];
       this.inventory.equipedItems.splice(index, 1);
       this.inventory.unequipedItems.push(item);
+      this.inventory.equipmentSlots[item.type] = false;
       this.storeInventory(this.inventory);
     },
     storeInventory(inventory) {
@@ -138,6 +185,30 @@ export default {
     console.log(this.player);
     console.log("Pre-existing inventory found, using that.");
     this.inventory = JSON.parse(rawInventory);
+    this.playerStats.strength = this.player.strength;
+    this.playerStats.dexterity = this.player.dexterity;
+    this.playerStats.intelligence = this.player.intelligence;
+
+    this.playerStats = {
+      strength:
+        this.player.strength +
+        this.inventory.equipedItems.reduce(
+          (strength, item) => strength + item.strength,
+          0
+        ),
+      dexterity:
+        this.player.dexterity +
+        this.inventory.equipedItems.reduce(
+          (dexterity, item) => dexterity + item.dexterity,
+          0
+        ),
+      intelligence:
+        this.player.intelligence +
+        this.inventory.equipedItems.reduce(
+          (intelligence, item) => intelligence + item.intelligence,
+          0
+        ),
+    };
   },
 };
 </script>

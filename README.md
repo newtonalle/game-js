@@ -51,12 +51,12 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 ## 2021-10-30
 ### Inventário
 1. ~~Imprimir, abaixo do nome do item, os stats que ele dá~~
-2. Os itens podem ter um requerimento mínimo de um ou mais stats para permitir equipar
+2. ~~Os itens podem ter um requerimento mínimo de um ou mais stats para permitir equipar~~
     - ~~Isso também precisa estar impresso na tela~~
     - Atenção para quando remover um item e diminuir os stats pode tornar outro item que está equipado como não equipado
 3. ~~O item deve ser um componente separado (tipo o statspicker)~~
-4. O jogador tem 3 slots de item - capacete, armadura e arma
-    - Só pode ser equipado um item por slot
+4. ~~O jogador tem 3 slots de item - capacete, armadura e arma~~
+    - ~~Só pode ser equipado um item por slot~~
     - ~~O slot que o item ocupa também deve ser impresso no item~~
 5. ~~Na tela de inventário mostrar também **vida máxima**, **defesa**, **mana máxima**,  **dano**~~ **Porém ainda é necessário ajustes e consertos**
     - ~~vida máxima = 200 + 20*strength~~
