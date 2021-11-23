@@ -192,6 +192,10 @@ export default {
       const [num1, num2, ...restoArray] = array;
       console.log(num1, num2);
       console.log("Resto", restoArray);
+
+      // Object entries
+      // Retorna um array em que cada posição é um atributo do objeto no formato (nome atributo, valor atributo)
+      console.log('Entries', Object.entries(pessoa))
     },
     advancedArrays() {
       // Existem 3 principais métodos para usar com arrays, o foreach, o map e o reduce
@@ -247,6 +251,8 @@ export default {
         return { ...acc, [el]: index };
       }, {});
       console.log(`reduce - Returned value is`, returnValue);
+
+      console.log('Entries', array.entries())
     },
     classes() {
       class Pessoa {

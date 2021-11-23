@@ -55,15 +55,13 @@
     <h4>Classe:</h4>
     <p v-text="player.class.name"></p>
     <h4>Vida:</h4>
-    <p v-text="player.basicStats.maxHealth + playerStats.strength * 20"></p>
-    <h4>Defesa:</h4>
-    <p v-text="player.basicStats.defense + playerStats.dexterity * 1"></p>
+    <p>{{playerStats.maxHealth}}</p>
     <h4>Mana:</h4>
-    <p v-text="player.basicStats.maxMana + playerStats.intelligence * 5"></p>
+    <p>{{playerStats.maxMana}}</p>
+    <h4>Defesa:</h4>
+    <p>{{playerStats.defense}}</p>
     <h4>Dano:</h4>
-    <p
-      v-text="player.basicStats.damage + playerStats[player.class.mainStat] * 1"
-    ></p>
+    <p>{{playerStats.damage}}</p>
     <p>------------------</p>
   </div>
 </template>
@@ -96,28 +94,9 @@ export default {
     // Transforma o valor do objeto toda vez que qualquer variável muda, como um watch geral
     // Problema aqui, pois não consigo utilizar um objeto computed em Javascript, somente no HTML, o
     // que é um problema, portanto estou movendo o sistema para uma Watch
-    //playerStats() {
-    //return {
-    //strength:
-    //this.player.strength +
-    //this.inventory.equipedItems.reduce(
-    //(strength, item) => strength + item.strength,
-    //0
-    //),
-    //dexterity:
-    //this.player.dexterity +
-    //this.inventory.equipedItems.reduce(
-    // (dexterity, item) => dexterity + item.dexterity,
-    // 0
-    //),
-    //intelligence:
-    //this.player.intelligence +
-    //this.inventory.equipedItems.reduce(
-    //(intelligence, item) => intelligence + item.intelligence,
-    //0
-    //),
-    //};
-    //},
+    exampleComputed() {
+      return 0
+    }
   },
   methods: {
     removeItem(index) {
@@ -151,6 +130,11 @@ export default {
               0
             ),
         };
+      
+      this.playerStats.maxHealth = this.player.basicStats.maxHealth + this.playerStats.strength * 20
+      this.playerStats.maxMana = this.player.basicStats.maxMana + this.playerStats.intelligence * 5
+      this.playerStats.defense = this.player.basicStats.defense + this.playerStats.dexterity * 1;
+      this.playerStats.damage = this.player.basicStats.damage + this.playerStats[this.player.class.mainStat] * 1
     },
     equipItem(index) {
       const item = this.inventory.unequipedItems[index];
