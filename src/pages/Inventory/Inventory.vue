@@ -170,6 +170,45 @@ export default {
       this.inventory.equipedItems.splice(index, 1);
       this.inventory.unequipedItems.push(item);
       this.inventory.equipmentSlots[item.type] = false;
+
+      for (let index = 0; index < this.inventory.equipedItems.length; index++) {
+        let element = this.inventory.equipedItems[index];
+        //--------------------------- Inserido antes dá checkagem pois o watch não pega que a
+        //váriavel unequiped itens mudou antes de ele acabar o que está fazendo
+        this.playerStats = {
+          strength:
+            this.player.strength +
+            this.inventory.equipedItems.reduce(
+              (strength, item) => strength + item.strength,
+              0
+            ),
+          dexterity:
+            this.player.dexterity +
+            this.inventory.equipedItems.reduce(
+              (dexterity, item) => dexterity + item.dexterity,
+              0
+            ),
+          intelligence:
+            this.player.intelligence +
+            this.inventory.equipedItems.reduce(
+              (intelligence, item) => intelligence + item.intelligence,
+              0
+            ),
+        };
+        //--------------------------
+        if (
+          element.minRequirements.strength > this.playerStats.strength ||
+          element.minRequirements.dexterity > this.playerStats.dexterity ||
+          element.minRequirements.intelligence > this.playerStats.intelligence
+        ) {
+          let itemB;
+          itemB = this.inventory.equipedItems[index];
+          this.inventory.equipedItems.splice(index, 1);
+          this.inventory.unequipedItems.push(itemB);
+          this.inventory.equipmentSlots[itemB.type] = false;
+          alert(itemB.name + " foi desequipado por falta de algum status!");
+        }
+      }
       this.storeInventory(this.inventory);
     },
     storeInventory(inventory) {

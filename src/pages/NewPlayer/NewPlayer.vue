@@ -112,12 +112,12 @@ const DEFAULT_INVENTORY = {
   unequipedItems: [
     {
       name: "Capacete Viking",
-      strength: 10,
+      strength: 0,
       dexterity: 3,
       intelligence: 1,
       type: "helmet",
       minRequirements: {
-        strength: 35,
+        strength: 15,
         dexterity: 5,
         intelligence: 0,
       },
