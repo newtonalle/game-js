@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <p>------------------</p>
+  <div class="item">
+    <hr class="rounded" />
     <p style="font-weight: bold">• {{ equipamentName }}</p>
     <p>Tipo: {{ equipamentType }}</p>
     <p>Força: {{ equipamentStrength }}</p>
@@ -10,6 +10,7 @@
     <p>Força Mínima: {{ equipamentMinRequirementsStrength }}</p>
     <p>Destreza Mínima: {{ equipamentMinRequirementsDexterity }}</p>
     <p>Inteligência Mínima: {{ equipamentMinRequirementsIntelligence }}</p>
+    <button @click="equipItem">{{actionLabel}}</button>
   </div>
 </template>
 
@@ -24,14 +25,34 @@ export default {
     equipamentMinRequirementsStrength: Number,
     equipamentMinRequirementsDexterity: Number,
     equipamentMinRequirementsIntelligence: Number,
+    equiped: Boolean
   },
 
   data: () => ({}),
 
-  watch: {},
+  computed: {
+    actionLabel() {
+      return this.equiped ? 'Desequipar' : 'Equipar'
+    }
+  },
 
-  methods: {},
+  methods: {
+    equipItem() {
+      this.$emit('toggleItem')
+    }
+  },
 
   mounted() {},
 };
 </script>
+
+<style scoped>
+hr.rounded {
+  border-top: 8px solid #bbb;
+  border-radius: 5px;
+}
+div.item {
+  width: 400px;
+  margin: auto;
+}
+</style>

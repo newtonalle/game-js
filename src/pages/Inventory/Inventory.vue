@@ -6,47 +6,43 @@
     <h1>Inventário</h1>
     <br />
     <h3>Equipamentos não equipados</h3>
-    <p
+    <item
       v-for="(equipament, index) in this.inventory.unequipedItems"
       :key="`unequiped-${index}`"
-    >
-      <items
-        :equipamentName="equipament.name"
-        :equipamentType="equipament.type"
-        :equipamentDexterity="equipament.dexterity"
-        :equipamentIntelligence="equipament.intelligence"
-        :equipamentStrength="equipament.strength"
-        :equipamentMinRequirementsDexterity="
-          equipament.minRequirements.dexterity
-        "
-        :equipamentMinRequirementsIntelligence="
-          equipament.minRequirements.intelligence
-        "
-        :equipamentMinRequirementsStrength="equipament.minRequirements.strength"
-      />
-      <span class="clickable" @click="equipItem(index)">E</span>
-    </p>
+      :equipamentName="equipament.name"
+      :equipamentType="equipament.type"
+      :equipamentDexterity="equipament.dexterity"
+      :equipamentIntelligence="equipament.intelligence"
+      :equipamentStrength="equipament.strength"
+      :equipamentMinRequirementsDexterity="
+        equipament.minRequirements.dexterity
+      "
+      :equipamentMinRequirementsIntelligence="
+        equipament.minRequirements.intelligence
+      "
+      :equipamentMinRequirementsStrength="equipament.minRequirements.strength"
+      @toggleItem="equipItem(index)"
+      :equiped="false"
+    />
     <h3>Equipamentos equipados</h3>
-    <p
+    <item
       v-for="(equipament, index) in this.inventory.equipedItems"
       :key="`equiped-${index}`"
-    >
-      <items
-        :equipamentName="equipament.name"
-        :equipamentType="equipament.type"
-        :equipamentDexterity="equipament.dexterity"
-        :equipamentIntelligence="equipament.intelligence"
-        :equipamentStrength="equipament.strength"
-        :equipamentMinRequirementsDexterity="
-          equipament.minRequirements.dexterity
-        "
-        :equipamentMinRequirementsIntelligence="
-          equipament.minRequirements.intelligence
-        "
-        :equipamentMinRequirementsStrength="equipament.minRequirements.strength"
-      />
-      <span class="clickable" @click="unequipItem(index)">U</span>
-    </p>
+      :equipamentName="equipament.name"
+      :equipamentType="equipament.type"
+      :equipamentDexterity="equipament.dexterity"
+      :equipamentIntelligence="equipament.intelligence"
+      :equipamentStrength="equipament.strength"
+      :equipamentMinRequirementsDexterity="
+        equipament.minRequirements.dexterity
+      "
+      :equipamentMinRequirementsIntelligence="
+        equipament.minRequirements.intelligence
+      "
+      :equipamentMinRequirementsStrength="equipament.minRequirements.strength"
+      equiped
+      @toggleItem="unequipItem(index)"
+    />
     <p>------------------</p>
     <h3>Status</h3>
     <h3 v-text="player.name"></h3>
@@ -76,10 +72,10 @@
 // Criar um formato para um objeto de item:
 // {nome: "Trevo", defesa: 1, ataque: 2, vida: 3, chanceDeCritico: 0.2}
 
-import Items from "./components/Items.vue";
+import Item from "./components/Item.vue";
 
 export default {
-  components: { Items },
+  components: { Item },
   data: () => ({
     inventory: {},
     playerStats: {
@@ -94,28 +90,7 @@ export default {
     // e o watch pega logo de cara, atualizando o valor de PlayerStats para o valor do player + items
     // Apesar de isso resolver o problema que tinha, irei criar uma função que é executada quando o site é criado
     // e quando algum valor em inventory.UnequipedItems atualiza, se eu conseguir usar funções em Watch
-    "inventory.unequipedItems"() {
-      this.playerStats = {
-        strength:
-          this.player.strength +
-          this.inventory.equipedItems.reduce(
-            (strength, item) => strength + item.strength,
-            0
-          ),
-        dexterity:
-          this.player.dexterity +
-          this.inventory.equipedItems.reduce(
-            (dexterity, item) => dexterity + item.dexterity,
-            0
-          ),
-        intelligence:
-          this.player.intelligence +
-          this.inventory.equipedItems.reduce(
-            (intelligence, item) => intelligence + item.intelligence,
-            0
-          ),
-      };
-    },
+    "inventory.unequipedItems"() {},
   },
   computed: {
     // Transforma o valor do objeto toda vez que qualquer variável muda, como um watch geral
@@ -145,37 +120,18 @@ export default {
     //},
   },
   methods: {
-    equipItem(index) {
-      let item;
-      item = this.inventory.unequipedItems[index];
-      if (item.minRequirements.strength <= this.playerStats.strength) {
-        if (item.minRequirements.dexterity <= this.playerStats.dexterity) {
-          if (
-            item.minRequirements.intelligence <= this.playerStats.intelligence
-          ) {
-            if (!this.inventory.equipmentSlots[item.type]) {
-              this.inventory.unequipedItems.splice(index, 1);
-              this.inventory.equipedItems.push(item);
-              this.inventory.equipmentSlots[item.type] = true;
-              this.storeInventory(this.inventory);
-              console.log(this.inventory);
-            }
-          }
-        }
-      }
-    },
-    unequipItem(index) {
-      let item;
-      item = this.inventory.equipedItems[index];
+    removeItem(index) {
+      const item = this.inventory.equipedItems[index];
       this.inventory.equipedItems.splice(index, 1);
       this.inventory.unequipedItems.push(item);
       this.inventory.equipmentSlots[item.type] = false;
 
-      for (let index = 0; index < this.inventory.equipedItems.length; index++) {
-        let element = this.inventory.equipedItems[index];
-        //--------------------------- Inserido antes dá checkagem pois o watch não pega que a
-        //váriavel unequiped itens mudou antes de ele acabar o que está fazendo
-        this.playerStats = {
+      this.recalculatePlayerStats()
+
+      return item
+    },
+    recalculatePlayerStats() {
+      this.playerStats = {
           strength:
             this.player.strength +
             this.inventory.equipedItems.reduce(
@@ -195,19 +151,43 @@ export default {
               0
             ),
         };
-        //--------------------------
+    },
+    equipItem(index) {
+      const item = this.inventory.unequipedItems[index];
+      if (item.minRequirements.strength <= this.playerStats.strength &&
+          item.minRequirements.dexterity <= this.playerStats.dexterity &&
+          item.minRequirements.intelligence <= this.playerStats.intelligence &&
+          !this.inventory.equipmentSlots[item.type]) {
+        this.inventory.unequipedItems.splice(index, 1);
+        this.inventory.equipedItems.push(item);
+        this.inventory.equipmentSlots[item.type] = true;
+        this.recalculatePlayerStats();
+        this.storeInventory(this.inventory);
+        console.log(this.inventory);
+      } else {
+        alert('Não é possível equipar o item')
+      }
+    },
+    unequipItem(index) {
+      this.removeItem(index)
+      const forceRemovedItems = []
+      
+
+      for (let [forceUnequipIndex, forceUnequipItem] of this.inventory.equipedItems.entries()) {
         if (
-          element.minRequirements.strength > this.playerStats.strength ||
-          element.minRequirements.dexterity > this.playerStats.dexterity ||
-          element.minRequirements.intelligence > this.playerStats.intelligence
+          forceUnequipItem.minRequirements.strength > this.playerStats.strength ||
+          forceUnequipItem.minRequirements.dexterity > this.playerStats.dexterity ||
+          forceUnequipItem.minRequirements.intelligence > this.playerStats.intelligence
         ) {
-          let itemB;
-          itemB = this.inventory.equipedItems[index];
-          this.inventory.equipedItems.splice(index, 1);
-          this.inventory.unequipedItems.push(itemB);
-          this.inventory.equipmentSlots[itemB.type] = false;
-          alert(itemB.name + " foi desequipado por falta de algum status!");
+          const removedItem = this.removeItem(forceUnequipIndex)
+          forceRemovedItems.push(removedItem)
         }
+      }
+      if (forceRemovedItems.length) {
+        alert(forceRemovedItems
+          .reduce((message, item) => message + `\n${item.name}`, '') + 
+          " foi desequipado por falta de algum status!"
+        );
       }
       this.storeInventory(this.inventory);
     },
@@ -228,26 +208,7 @@ export default {
     this.playerStats.dexterity = this.player.dexterity;
     this.playerStats.intelligence = this.player.intelligence;
 
-    this.playerStats = {
-      strength:
-        this.player.strength +
-        this.inventory.equipedItems.reduce(
-          (strength, item) => strength + item.strength,
-          0
-        ),
-      dexterity:
-        this.player.dexterity +
-        this.inventory.equipedItems.reduce(
-          (dexterity, item) => dexterity + item.dexterity,
-          0
-        ),
-      intelligence:
-        this.player.intelligence +
-        this.inventory.equipedItems.reduce(
-          (intelligence, item) => intelligence + item.intelligence,
-          0
-        ),
-    };
+    this.recalculatePlayerStats()
   },
 };
 </script>
