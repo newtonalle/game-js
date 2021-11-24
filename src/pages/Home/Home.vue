@@ -2,7 +2,8 @@
   <div>
     <h1>Menu principal</h1>
     <a href="/#/battle">Batalha</a><br />
-    <a href="/#/tutorial-js">Tutorial</a> <br /><br />
+    <a href="/#/tutorial-js">Tutorial JS</a> <br />
+    <a href="/#/tutorial-vuex">Tutorial VueX</a> <br /><br />
     <button @click="clearLocalStorage">Limpar dados</button>
   </div>
 </template>
