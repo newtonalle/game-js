@@ -7,16 +7,14 @@
     <br />
     <h3>Equipamentos não equipados</h3>
     <item
-      v-for="(equipament, index) in this.inventory.unequipedItems"
+      v-for="(equipament, index) in this.localInventory.unequipedItems"
       :key="`unequiped-${index}`"
       :equipamentName="equipament.name"
       :equipamentType="equipament.type"
       :equipamentDexterity="equipament.dexterity"
       :equipamentIntelligence="equipament.intelligence"
       :equipamentStrength="equipament.strength"
-      :equipamentMinRequirementsDexterity="
-        equipament.minRequirements.dexterity
-      "
+      :equipamentMinRequirementsDexterity="equipament.minRequirements.dexterity"
       :equipamentMinRequirementsIntelligence="
         equipament.minRequirements.intelligence
       "
@@ -26,16 +24,14 @@
     />
     <h3>Equipamentos equipados</h3>
     <item
-      v-for="(equipament, index) in this.inventory.equipedItems"
+      v-for="(equipament, index) in this.localInventory.equipedItems"
       :key="`equiped-${index}`"
       :equipamentName="equipament.name"
       :equipamentType="equipament.type"
       :equipamentDexterity="equipament.dexterity"
       :equipamentIntelligence="equipament.intelligence"
       :equipamentStrength="equipament.strength"
-      :equipamentMinRequirementsDexterity="
-        equipament.minRequirements.dexterity
-      "
+      :equipamentMinRequirementsDexterity="equipament.minRequirements.dexterity"
       :equipamentMinRequirementsIntelligence="
         equipament.minRequirements.intelligence
       "
@@ -55,13 +51,13 @@
     <h4>Classe:</h4>
     <p v-text="player.class.name"></p>
     <h4>Vida:</h4>
-    <p>{{playerStats.maxHealth}}</p>
+    <p>{{ playerStats.maxHealth }}</p>
     <h4>Mana:</h4>
-    <p>{{playerStats.maxMana}}</p>
+    <p>{{ playerStats.maxMana }}</p>
     <h4>Defesa:</h4>
-    <p>{{playerStats.defense}}</p>
+    <p>{{ playerStats.defense }}</p>
     <h4>Dano:</h4>
-    <p>{{playerStats.damage}}</p>
+    <p>{{ playerStats.damage }}</p>
     <p>------------------</p>
   </div>
 </template>
@@ -75,13 +71,12 @@ import Item from "./components/Item.vue";
 export default {
   components: { Item },
   data: () => ({
-    inventory: {},
+    localInventory: {},
     playerStats: {
       strength: 0,
       intelligence: 0,
       dexterity: 0,
     },
-    player: {},
   }),
   watch: {
     // Esse watch também é executado quando o site é created, porque o inventário atualiza
@@ -95,104 +90,121 @@ export default {
     // Problema aqui, pois não consigo utilizar um objeto computed em Javascript, somente no HTML, o
     // que é um problema, portanto estou movendo o sistema para uma Watch
     exampleComputed() {
-      return 0
-    }
+      return 0;
+    },
+
+    player() {
+      return this.$store.state.player;
+    },
+
+    inventory() {
+      return this.$store.state.inventory;
+    },
   },
   methods: {
     removeItem(index) {
-      const item = this.inventory.equipedItems[index];
-      this.inventory.equipedItems.splice(index, 1);
-      this.inventory.unequipedItems.push(item);
-      this.inventory.equipmentSlots[item.type] = false;
+      const item = this.localInventory.equipedItems[index];
+      this.localInventory.equipedItems.splice(index, 1);
+      this.localInventory.unequipedItems.push(item);
+      this.localInventory.equipmentSlots[item.type] = false;
 
-      this.recalculatePlayerStats()
+      this.recalculatePlayerStats();
 
-      return item
+      return item;
     },
     recalculatePlayerStats() {
       this.playerStats = {
-          strength:
-            this.player.strength +
-            this.inventory.equipedItems.reduce(
-              (strength, item) => strength + item.strength,
-              0
-            ),
-          dexterity:
-            this.player.dexterity +
-            this.inventory.equipedItems.reduce(
-              (dexterity, item) => dexterity + item.dexterity,
-              0
-            ),
-          intelligence:
-            this.player.intelligence +
-            this.inventory.equipedItems.reduce(
-              (intelligence, item) => intelligence + item.intelligence,
-              0
-            ),
-        };
-      
-      this.playerStats.maxHealth = this.player.basicStats.maxHealth + this.playerStats.strength * 20
-      this.playerStats.maxMana = this.player.basicStats.maxMana + this.playerStats.intelligence * 5
-      this.playerStats.defense = this.player.basicStats.defense + this.playerStats.dexterity * 1;
-      this.playerStats.damage = this.player.basicStats.damage + this.playerStats[this.player.class.mainStat] * 1
+        strength:
+          this.player.strength +
+          this.localInventory.equipedItems.reduce(
+            (strength, item) => strength + item.strength,
+            0
+          ),
+        dexterity:
+          this.player.dexterity +
+          this.localInventory.equipedItems.reduce(
+            (dexterity, item) => dexterity + item.dexterity,
+            0
+          ),
+        intelligence:
+          this.player.intelligence +
+          this.localInventory.equipedItems.reduce(
+            (intelligence, item) => intelligence + item.intelligence,
+            0
+          ),
+      };
+
+      this.playerStats.maxHealth =
+        this.player.basicStats.maxHealth + this.playerStats.strength * 20;
+      this.playerStats.maxMana =
+        this.player.basicStats.maxMana + this.playerStats.intelligence * 5;
+      this.playerStats.defense =
+        this.player.basicStats.defense + this.playerStats.dexterity * 1;
+      this.playerStats.damage =
+        this.player.basicStats.damage +
+        this.playerStats[this.player.class.mainStat] * 1;
     },
     equipItem(index) {
-      const item = this.inventory.unequipedItems[index];
-      if (item.minRequirements.strength <= this.playerStats.strength &&
-          item.minRequirements.dexterity <= this.playerStats.dexterity &&
-          item.minRequirements.intelligence <= this.playerStats.intelligence &&
-          !this.inventory.equipmentSlots[item.type]) {
-        this.inventory.unequipedItems.splice(index, 1);
-        this.inventory.equipedItems.push(item);
-        this.inventory.equipmentSlots[item.type] = true;
+      const item = this.localInventory.unequipedItems[index];
+      if (
+        item.minRequirements.strength <= this.playerStats.strength &&
+        item.minRequirements.dexterity <= this.playerStats.dexterity &&
+        item.minRequirements.intelligence <= this.playerStats.intelligence &&
+        !this.localInventory.equipmentSlots[item.type]
+      ) {
+        this.localInventory.unequipedItems.splice(index, 1);
+        this.localInventory.equipedItems.push(item);
+        this.localInventory.equipmentSlots[item.type] = true;
         this.recalculatePlayerStats();
-        this.storeInventory(this.inventory);
-        console.log(this.inventory);
+        this.storeInventory(this.localInventory);
+        console.log(this.localInventory);
       } else {
-        alert('Não é possível equipar o item')
+        alert("Não é possível equipar o item");
       }
     },
     unequipItem(index) {
-      this.removeItem(index)
-      const forceRemovedItems = []
-      
+      this.removeItem(index);
+      const forceRemovedItems = [];
 
-      for (let [forceUnequipIndex, forceUnequipItem] of this.inventory.equipedItems.entries()) {
+      for (let [
+        forceUnequipIndex,
+        forceUnequipItem,
+      ] of this.localInventory.equipedItems.entries()) {
         if (
-          forceUnequipItem.minRequirements.strength > this.playerStats.strength ||
-          forceUnequipItem.minRequirements.dexterity > this.playerStats.dexterity ||
-          forceUnequipItem.minRequirements.intelligence > this.playerStats.intelligence
+          forceUnequipItem.minRequirements.strength >
+            this.playerStats.strength ||
+          forceUnequipItem.minRequirements.dexterity >
+            this.playerStats.dexterity ||
+          forceUnequipItem.minRequirements.intelligence >
+            this.playerStats.intelligence
         ) {
-          const removedItem = this.removeItem(forceUnequipIndex)
-          forceRemovedItems.push(removedItem)
+          const removedItem = this.removeItem(forceUnequipIndex);
+          forceRemovedItems.push(removedItem);
         }
       }
       if (forceRemovedItems.length) {
-        alert(forceRemovedItems
-          .reduce((message, item) => message + `\n${item.name}`, '') + 
-          " foi desequipado por falta de algum status!"
+        alert(
+          forceRemovedItems.reduce(
+            (message, item) => message + `\n${item.name}`,
+            ""
+          ) + " foi desequipado por falta de algum status!"
         );
       }
-      this.storeInventory(this.inventory);
+      this.storeInventory(this.localInventory);
     },
     storeInventory(inventory) {
-      localStorage.setItem("game-inventory", JSON.stringify(inventory));
+      this.$store.dispatch("setInventory", inventory);
     },
   },
   created() {
     //this.playerBasicStats();
-    const rawInventory = localStorage.getItem("game-inventory");
-    const rawPlayer = localStorage.getItem("game-player");
-    console.log("Pre-existing player found, using that.");
-    this.player = JSON.parse(rawPlayer);
-    console.log(this.player);
-    console.log("Pre-existing inventory found, using that.");
-    this.inventory = JSON.parse(rawInventory);
+    this.localInventory = this.inventory;
+
     this.playerStats.strength = this.player.strength;
     this.playerStats.dexterity = this.player.dexterity;
     this.playerStats.intelligence = this.player.intelligence;
 
-    this.recalculatePlayerStats()
+    this.recalculatePlayerStats();
   },
 };
 </script>

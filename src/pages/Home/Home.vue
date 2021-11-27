@@ -4,16 +4,15 @@
     <a href="/#/battle">Batalha</a><br />
     <a href="/#/tutorial-js">Tutorial JS</a> <br />
     <a href="/#/tutorial-vuex">Tutorial VueX</a> <br /><br />
-    <button @click="clearLocalStorage">Limpar dados</button>
+    <button @click="clearState">Limpar dados</button>
   </div>
 </template>
 
 <script>
 export default {
   methods: {
-    clearLocalStorage() {
-      const localStorageKeys = ["game-player", "game-inventory"];
-      localStorageKeys.forEach((key) => localStorage.removeItem(key));
+    clearState() {
+      this.$store.dispatch("resetState");
       this.$router.push({ path: "/new-player" });
     },
   },
