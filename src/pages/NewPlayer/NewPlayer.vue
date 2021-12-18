@@ -114,13 +114,7 @@ export default {
       strength: 0,
       dexterity: 0,
       intelligence: 0,
-      currentStats: {
-        currentHealth: 0,
-        currentMana: 0,
-        currentHealthPercentage: 100,
-        currentManaPercentage: 100,
-      },
-      basicStats: { maxHealth: 200, defense: 10, maxMana: 100, damage: 30 }, // - Apagar
+      basicStats: { maxHealth: 200, defense: 10, maxMana: 100, damage: 30 },
       class: null,
       skillPoints: 5,
     },
@@ -159,11 +153,9 @@ export default {
         strength: this.player.strength,
         dexterity: this.player.dexterity,
         intelligence: this.player.intelligence,
-        currentStats: this.player.currentStats,
         basicStats: this.player.basicStats,
         class: this.player.class,
       });
-      this.$store.dispatch("healStats");
       this.$router.push({ path: "/" });
     },
   },

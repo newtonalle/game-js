@@ -59,14 +59,22 @@ const DEFAULT_INVENTORY = {
                 intelligence: 0,
             },
         },
-    ], // tornar cada item em um item de verdade, não só nome de item
+    ],
 };
 
 export const doubleCount = (context) => context.commit('increment', context.state.count)
 
 export const newPlayer = (context, player) => {
+    player.currentStats = {
+        currentHealth: 0,
+        currentMana: 0
+    }
+
     context.commit('setPlayer', player)
     context.commit('setInventory', DEFAULT_INVENTORY)
+
+    context.commit('setPlayerHealth', context.getters.playerMaxHealth)
+    context.commit('setPlayerMana', context.getters.playerMaxMana)
 }
 
 export const resetState = (context) => context.commit('setState', defaultState())
@@ -78,8 +86,24 @@ export const unequipItem = (context, index) => {
 
 }
 
-export const equipItem = (context, index) => {
-    context.commit('equipItem', index)
-}
+export const equipItem = ({ state, commit, getters }, index) => {
+    const item = state.inventory.unequipedItems[index]
 
-export const healStats = (context) => context.commit('setCurrentStats', 100)
+    if (
+        item.minRequirements.strength <= getters.playerStrength &&
+        item.minRequirements.intelligence <= getters.playerIntelligence &&
+        item.minRequirements.dexterity <= getters.playerDexterity &&
+        !state.inventory.equipmentSlots[item.type]
+    ) {
+        const currentHealthPercentage = getters.playerCurrentHealthPercentage
+        const currentManaPercentage = getters.playerCurrentManaPercentage
+
+        commit('equipItem', { item, index })
+
+        commit('setPlayerHealth', currentHealthPercentage * getters.playerMaxHealth)
+        commit('setPlayerMana', currentManaPercentage * getters.playerMaxMana)
+    } else {
+        alert("Não é possível equipar o item")
+    }
+
+}

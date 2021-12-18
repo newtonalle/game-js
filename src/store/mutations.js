@@ -3,38 +3,17 @@ export const decrement = (state, amount) => state.count -= amount
 export const setPlayer = (state, player) => state.player = player
 export const setInventory = (state, inventory) => state.inventory = inventory
 
-export const equipItem = (state, index) => {
-    const item = state.inventory.unequipedItems[index]
-    if (
-        item.minRequirements.strength <= state.player.strength + state.inventory.equipedItems.reduce(
-            (strength, item) => strength + item.strength, 0) && // Deveria ser o getter: "playerStrength"
-        item.minRequirements.dexterity <= state.player.dexterity + state.inventory.equipedItems.reduce(
-            (dexterity, item) => dexterity + item.dexterity, 0) && // Deveria ser o getter: "playerDexterity"
-        item.minRequirements.intelligence <= state.player.intelligence + state.inventory.equipedItems.reduce(
-            (intelligence, item) => intelligence + item.intelligence, 0) && // Deveria ser o getter: "playerIntelligence"
-        !state.inventory.equipmentSlots[item.type]
-    ) {
-        state.inventory.unequipedItems.splice(index, 1)
-        state.inventory.equipedItems.push(item)
-        state.inventory.equipmentSlots[item.type] = true
-        state.player.currentStats.currentHealth = (state.player.basicStats.maxHealth + (state.inventory.equipedItems.reduce( // Deveria ser o getter: "playerMaxHealth"
-            (strength, item) => strength + item.strength, 0) + state.player.strength) * 20) / 100 * state.player.currentStats.currentHealthPercentage
-        state.player.currentStats.currentMana = (state.player.basicStats.maxMana + (state.inventory.equipedItems.reduce( // Deveria ser o getter: "playerMaxMana"
-            (intelligence, item) => intelligence + item.intelligence, 0) + state.player.intelligence) * 5) / 100 * state.player.currentStats.currentManaPercentage
-    } else {
-        alert("Não é possível equipar o item")
-    }
-
+export const equipItem = (state, { item, index }) => {
+    state.inventory.unequipedItems.splice(index, 1)
+    state.inventory.equipedItems.push(item)
+    state.inventory.equipmentSlots[item.type] = true
 }
+
 export const setState = (prevState, newState) => Object.assign(prevState, newState)
 
-export const setCurrentStats = (state, percentage) => {
-    state.player.currentStats.currentHealth = (state.player.basicStats.maxHealth + (state.inventory.equipedItems.reduce( // Deveria ser o getter: "playerMaxHealth"
-        (strength, item) => strength + item.strength, 0) + state.player.strength) * 20) / 100 * percentage
+export const setPlayerHealth = (state, health) => state.player.currentStats.currentHealth = health
 
-    state.player.currentStats.currentMana = (state.player.basicStats.maxMana + (state.inventory.equipedItems.reduce( // Deveria ser o getter: "playerMaxMana"
-        (intelligence, item) => intelligence + item.intelligence, 0) + state.player.intelligence) * 5) / 100 * percentage
-}
+export const setPlayerMana = (state, mana) => state.player.currentStats.currentMana = mana
 
 export const unequipItem = (state, index) => {
     const forceRemovedItems = []
