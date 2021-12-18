@@ -72,3 +72,14 @@ export const newPlayer = (context, player) => {
 export const resetState = (context) => context.commit('setState', defaultState())
 
 export const setInventory = (context, inventory) => context.commit('setInventory', inventory)
+
+export const unequipItem = (context, index) => {
+    context.commit('unequipItem', index)
+
+}
+
+export const equipItem = (context, index) => {
+    context.commit('equipItem', index)
+}
+
+export const healStats = (context) => context.commit('setCurrentStats', 100)

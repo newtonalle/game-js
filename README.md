@@ -67,3 +67,10 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
         - ~~archer: attributo principal = dexterity~~
         - ~~mage: attributo principal = intelligence~~
         - ~~Dentro da classe, além do baseStats deve ter o atributo principal~~
+
+## 2021-11-27
+1. ~~Mover toda a lógica de equipar e desequipar items para o VueX~~
+2. ~~Os status do player devem ser getters do VueX~~
+3. ~~Criar um status de health e mana atual (só tem o max):~~
+    ~~- A porcentagem de vida/mana atual vs máximo deve ser mantida ao equipar/desequipar itens~~
+     

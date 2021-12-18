@@ -10,7 +10,7 @@
     <p>Força Mínima: {{ equipamentMinRequirementsStrength }}</p>
     <p>Destreza Mínima: {{ equipamentMinRequirementsDexterity }}</p>
     <p>Inteligência Mínima: {{ equipamentMinRequirementsIntelligence }}</p>
-    <button @click="equipItem">{{actionLabel}}</button>
+    <button @click="toggleItem">{{ actionLabel }}</button>
   </div>
 </template>
 
@@ -25,21 +25,21 @@ export default {
     equipamentMinRequirementsStrength: Number,
     equipamentMinRequirementsDexterity: Number,
     equipamentMinRequirementsIntelligence: Number,
-    equiped: Boolean
+    equiped: Boolean,
   },
 
   data: () => ({}),
 
   computed: {
     actionLabel() {
-      return this.equiped ? 'Desequipar' : 'Equipar'
-    }
+      return this.equiped ? "Desequipar" : "Equipar";
+    },
   },
 
   methods: {
-    equipItem() {
-      this.$emit('toggleItem')
-    }
+    toggleItem() {
+      this.$emit("toggleItem");
+    },
   },
 
   mounted() {},

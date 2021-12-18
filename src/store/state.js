@@ -1,7 +1,7 @@
 const state = {
     count: 1,
     player: null,
-    inventory: null
+    inventory: null,
 }
 
 export default () => state
