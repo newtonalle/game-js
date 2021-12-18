@@ -81,9 +81,33 @@ export const resetState = (context) => context.commit('setState', defaultState()
 
 export const setInventory = (context, inventory) => context.commit('setInventory', inventory)
 
-export const unequipItem = (context, index) => {
-    context.commit('unequipItem', index)
+export const unequipItem = ({ commit, state, getters }, index) => {
+    const forceRemovedItems = []
+    const item = state.inventory.equipedItems[index] // Deveria ser a mutation: "removeItem"
 
+    commit('unequipItem', { item, index })
+
+    for (let [
+        forceUnequipIndex,
+        forceUnequipItem,
+    ] of state.inventory.equipedItems.entries()) {
+        if (
+            forceUnequipItem.minRequirements.strength > getters.playerStrength ||
+            forceUnequipItem.minRequirements.dexterity > getters.playerDexterity ||
+            forceUnequipItem.minRequirements.intelligence > getters.playerIntelligence
+        ) {
+            forceRemovedItems.push(forceUnequipItem)
+            commit('unequipItem', { item: forceUnequipItem, index: forceUnequipIndex })
+        }
+    }
+    if (forceRemovedItems.length) {
+        alert(
+            forceRemovedItems.reduce(
+                (message, item) => message + `\n${item.name}`,
+                ""
+            ) + " foi desequipado por falta de algum status!"
+        )
+    }
 }
 
 export const equipItem = ({ state, commit, getters }, index) => {
