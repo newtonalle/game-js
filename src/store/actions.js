@@ -1,66 +1,5 @@
 import defaultState from './state'
-
-
-const DEFAULT_INVENTORY = {
-    equipmentSlots: {
-        helmet: false,
-        armor: false,
-        mainHand: false,
-    },
-    equipedItems: [],
-    unequipedItems: [
-        {
-            name: "Capacete Viking",
-            strength: 0,
-            dexterity: 3,
-            intelligence: 1,
-            type: "helmet",
-            minRequirements: {
-                strength: 15,
-                dexterity: 5,
-                intelligence: 0,
-            },
-        },
-
-        {
-            name: "Colete",
-            strength: 5,
-            dexterity: 10,
-            intelligence: 2,
-            type: "armor",
-            minRequirements: {
-                strength: 0,
-                dexterity: 0,
-                intelligence: 0,
-            },
-        },
-
-        {
-            name: "Adaga",
-            strength: 0,
-            dexterity: 15,
-            intelligence: 5,
-            type: "mainHand",
-            minRequirements: {
-                strength: 0,
-                dexterity: 0,
-                intelligence: 0,
-            },
-        },
-        {
-            name: "Adaga II",
-            strength: 0,
-            dexterity: 15,
-            intelligence: 5,
-            type: "mainHand",
-            minRequirements: {
-                strength: 0,
-                dexterity: 0,
-                intelligence: 0,
-            },
-        },
-    ],
-};
+import { DEFAULT_INVENTORY } from './constants'
 
 export const doubleCount = (context) => context.commit('increment', context.state.count)
 
@@ -85,6 +24,9 @@ export const unequipItem = ({ commit, state, getters }, index) => {
     const forceRemovedItems = []
     const item = state.inventory.equipedItems[index] // Deveria ser a mutation: "removeItem"
 
+    const currentHealthPercentage = getters.playerCurrentHealthPercentage
+    const currentManaPercentage = getters.playerCurrentManaPercentage
+
     commit('unequipItem', { item, index })
 
     for (let [
@@ -100,6 +42,10 @@ export const unequipItem = ({ commit, state, getters }, index) => {
             commit('unequipItem', { item: forceUnequipItem, index: forceUnequipIndex })
         }
     }
+
+    commit('setPlayerHealth', currentHealthPercentage * getters.playerMaxHealth)
+    commit('setPlayerMana', currentManaPercentage * getters.playerMaxMana)
+
     if (forceRemovedItems.length) {
         alert(
             forceRemovedItems.reduce(
